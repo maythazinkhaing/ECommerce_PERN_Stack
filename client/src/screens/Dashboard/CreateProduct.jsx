@@ -8,7 +8,7 @@ import { createProduct } from "util/HandleProductAPI";
 import { useStateContext } from "context/ContextProvider";
 
 function CreateProduct() {
-  const { auth } = useStateContext();
+  const { auth, setAuth } = useStateContext();
   const [selectedFileName, setSelectedFileName] = useState("");
   const [category, setCategory] = useState([
     {
@@ -19,7 +19,10 @@ function CreateProduct() {
 
   const { accessToken } = auth.user;
   useEffect(() => {
-    getCategory(setCategory, accessToken);
+    console.log(
+      "CAtegor ::: " + getCategory(setCategory, accessToken, setAuth)
+    );
+    //setCategory(getCategory(setCategory, accessToken, setAuth));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 

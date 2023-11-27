@@ -1,5 +1,6 @@
+//import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { SideBar, Header } from "components";
+
 import {
   CreateProduct,
   ProductConfig,
@@ -8,47 +9,63 @@ import {
   Login,
 } from "screens";
 import { useStateContext } from "context/ContextProvider";
+import ProtectedRoute from "PrivateRoute";
+import SidebarLayout from "layout/SidebarLayout";
+import NotFound from "screens/NotFound";
 
 function App() {
-  const { activeMenu } = useStateContext();
+  const { activeMenu, auth } = useStateContext();
+  const r = auth.refreshToken;
+  console.log(auth);
 
   return (
     <div>
       <Router>
-        <div className="flex relative">
-          {activeMenu && window.location.pathname !== "/login" ? (
-            <div className="sideBar_on ">
-              <SideBar />
-            </div>
-          ) : (
-            <div className="sideBar_off">
-              <SideBar />
-            </div>
-          )}
-          <div
-            className={`Header_Container ${
-              activeMenu && window.location.pathname !== "/login"
-                ? "md:ml-60"
-                : "flex-2"
-            } `}
-          >
-            {window.location.pathname !== "/login" && (
-              <div className="navbar">
-                <Header />
-              </div>
-            )}
-
-            <div>
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/createProduct" element={<CreateProduct />} />
-                <Route path="/productConfig" element={<ProductConfig />} />
-                <Route path="/adminConfig" element={<AdminConfig />} />
-                <Route path="/createAdmin" element={<CreateAdmin />} />
-              </Routes>
-            </div>
-          </div>
-        </div>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route element={<SidebarLayout />}>
+            <Route
+              path="/createProduct"
+              element={
+                <ProtectedRoute>
+                  <CreateProduct />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/productConfig"
+              element={
+                <ProtectedRoute>
+                  <ProductConfig />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/adminConfig"
+              element={
+                <ProtectedRoute>
+                  <AdminConfig />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/createAdmin"
+              element={
+                <ProtectedRoute>
+                  <CreateAdmin />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <NotFound />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+        </Routes>
       </Router>
     </div>
   );

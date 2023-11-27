@@ -34,9 +34,10 @@ const registerAdmin = asyncHandler(async (req, res) => {
 //LOGIN
 //POST
 const loginAdmin = asyncHandler(async (req, res) => {
-  console.log("Request Body:", req.body);
   const { username, password } = req.body;
-  console.log("User and Pwd  :" + username, password);
+  const refresh = generateRefreshToken(username);
+  //console.log("refresh ::: " + refresh);
+  //console.log("User and Pwd  :" + username, password);
   if (!username || !password) {
     res.status(400);
     throw new Error("Please Fill in all field");
@@ -50,9 +51,10 @@ const loginAdmin = asyncHandler(async (req, res) => {
     admin.rows[0] &&
     (await bcrypt.compare(password, admin.rows[0].password))
   ) {
-    res.cookie("jwt", generateRefreshToken(username), {
+    res.cookie("jwt", refresh, {
       httpOnly: true,
-
+      secure: true,
+      sameSite: "None",
       maxAge: 24 * 60 * 60 * 1000,
     });
     res.json({
@@ -62,12 +64,13 @@ const loginAdmin = asyncHandler(async (req, res) => {
       accessToken: generateAccessToken(username),
     });
   } else {
-    res.status(400);
+    res.status(401);
     throw new Error("Invalild Credential.");
   }
 });
 
 //REFRESH TOKEN
+// @ GET auth/refreshToken
 const refreshToken = (req, res) => {
   const cookies = req.cookies;
 
@@ -82,7 +85,7 @@ const refreshToken = (req, res) => {
       if (err) return res.sendStatus(403);
 
       const foundUser = pool.query(
-        "SELECT id, username FROM admin WHERE username = $1",
+        "SELECT username FROM admin WHERE username = $1",
         [decoded.username]
       );
 
@@ -98,7 +101,11 @@ const refreshToken = (req, res) => {
 const logout = (req, res) => {
   const cookies = req.cookies;
   if (!cookies.jwt) return res.sendStatus(204); //no content
-  res.clearCookie("jwt", { httpOnly: true });
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
   res.json({ message: "Cookie Cleared!" });
 };
 

@@ -4,14 +4,13 @@ import { FiChevronsRight } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { useStateContext } from "context/ContextProvider";
 import { handleLogOut } from "util/HandleAuth";
-import { useNavigate } from "react-router-dom";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 function Header() {
-  const navigate = useNavigate;
+  //const navigate = useNavigate;
   const {
     activeMenu,
     setActiveMenu,
@@ -32,12 +31,7 @@ function Header() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const logoutHandler = () => {
-    handleLogOut();
-    setAuth({
-      user: null,
-      isSuccess: false,
-    });
-    navigate("/login");
+    handleLogOut(setAuth);
   };
 
   useEffect(() => {
@@ -47,7 +41,7 @@ function Header() {
       setActiveMenu(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [screenSize]);
+  }, [screenSize, auth]);
 
   return (
     <div className="item_center py-1 px-2">

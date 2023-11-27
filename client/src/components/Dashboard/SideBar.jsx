@@ -59,7 +59,6 @@ function SideBar() {
                 <li key={link.title}>
                   {link.sub_menu ? (
                     <div
-                      key={link.title}
                       className={`link ${
                         activeTitle === link.title ? "text-skyblue" : ""
                       }`}
@@ -75,7 +74,6 @@ function SideBar() {
                     </div>
                   ) : (
                     <NavLink
-                      key={link.title}
                       to={`/${link.title}`}
                       className={`link ${
                         activeTitle === link.title ? "text-skyblue" : ""
@@ -92,7 +90,6 @@ function SideBar() {
                     {link.sub_menu.map((subMenu, index) => (
                       <li key={subMenu.name}>
                         <NavLink
-                          key={subMenu.name}
                           to={`/${subMenu.src}`}
                           className={`link sub_link ${
                             activeSubMenu === subMenu.name

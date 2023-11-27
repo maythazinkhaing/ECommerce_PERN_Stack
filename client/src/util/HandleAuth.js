@@ -1,17 +1,19 @@
-import axios from "axios";
+import axios from "api/axios";
 
-const url = "http://localhost:3001/auth";
+const LOGIN_URL = "/auth/loginAdmin";
+const LOGOUT_URL = "auth/logout";
+const REFRESH = "/auth/refreshToken";
 //export const savedUser = JSON.parse(localStorage.getItem("user"));
 
 export const login = async (formData, setAuth) => {
   try {
-    console.log("LOGIN :" + formData);
-    const response = await axios.post(`${url}/loginAdmin`, formData, {
+    const response = await axios.post(LOGIN_URL, formData, {
       headers: {
         "Content-Type": "application/json",
       },
+      withCredentials: true,
     });
-    console.log("From HandleAPI :" + response.data);
+
     if (response.status === 200) {
       localStorage.setItem("user", JSON.stringify(response.data));
       setAuth((data) => {
@@ -32,10 +34,43 @@ export const login = async (formData, setAuth) => {
   }
 };
 
-export const handleLogOut = (setAuth) => {
-  localStorage.removeItem("user");
-  setAuth({
-    user: null,
-    isSuccess: false,
-  });
+export const refresh = async (setAuth) => {
+  try {
+    const response = await axios.get(REFRESH, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
+    setAuth((prev) => {
+      console.log(JSON.stringify(prev));
+      console.log(response.data.accessToken);
+      return {
+        ...prev,
+        user: { ...prev.user, accessToken: response.data.accessToken },
+      };
+    });
+    return response.data.accessToken;
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    throw error; // Propagate the error for further handling
+  }
+};
+
+export const handleLogOut = async (setAuth) => {
+  try {
+    const response = await axios.post(
+      LOGOUT_URL,
+      {},
+      { withCredentials: true }
+    );
+    localStorage.removeItem("user");
+    setAuth({
+      user: null,
+      isSuccess: false,
+    });
+    console.log(response);
+  } catch (error) {
+    console.log(error);
+  }
 };

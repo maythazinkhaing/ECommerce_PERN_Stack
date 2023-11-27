@@ -1,22 +1,27 @@
 import { PageHeader, Button } from "components";
 import { PiPencilBold } from "react-icons/pi";
 import { HiOutlineTrash } from "react-icons/hi";
+//import useRefreshToken from "hook/useRefreshToken";
 
 function ProductConfig() {
+  //const refresh = useRefreshToken();
   return (
     <div className="body_container">
       <PageHeader title="Product Lists" />
       <hr />
       <Button name={"create"} to="/createProduct" />
+      {/* <button onClick={() => refresh()}>Refresh</button> */}
       <table className="min-w-full text-left text-xs font-light items-center">
         <thead className="border-b dark:border-neutral-200">
-          <th>No.</th>
-          <th>Image</th>
-          <th>Product Name</th>
-          <th>Category</th>
-          <th>Price</th>
-          <th>Status</th>
-          <th>Action</th>
+          <tr>
+            <th>No.</th>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
         </thead>
         <tbody>
           <tr className="border-b dark:border-neutral-200">
