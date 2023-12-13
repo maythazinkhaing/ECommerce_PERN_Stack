@@ -25,3 +25,6 @@ CREATE TABLE admin (
     email           VARCHAR(50) NOT NULL,
     password        VARCHAR(100) NOT NULL
     );
+
+
+--  ALTER TABLE product ALTER COLUMN createdAt SET DEFAULT CURRENT_TIMESTAMP;

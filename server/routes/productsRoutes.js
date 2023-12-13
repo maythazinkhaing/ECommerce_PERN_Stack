@@ -8,6 +8,7 @@ const {
   updateProduct,
 } = require("../controllers/productControllers");
 //const picUploadMiddleware = require("../middleware/picUploadMiddleware");
+const picUploadMiddleware = require("../middleware/picUploadMiddleware");
 
 const multer = require("multer");
 
@@ -31,9 +32,9 @@ router.get("/all", getAllProducts);
 
 router.get("/detail/:id", getProductDetail);
 
-router.post("/add", upload.single("picture"), createProduct);
+router.post("/add", picUploadMiddleware, createProduct);
 
-router.put("/update/:id", updateProduct);
+router.put("/update/:id", picUploadMiddleware, updateProduct);
 
 router.delete("/del/:id", delProduct);
 

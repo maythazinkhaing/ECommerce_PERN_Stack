@@ -10,7 +10,7 @@ function Button({ name, to, bg }) {
     <button
       className={`${
         bg ? bg : " bg-skyblue text-white"
-      } w-20 h-7 py-1 px-3 text-xs rounded-md my-2 uppercase`}
+      } w-20 h-7 py-1 px-3 text-xs rounded-md my-2 mx-1 uppercase`}
       onClick={handleClick}
     >
       {name}

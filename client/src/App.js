@@ -12,6 +12,7 @@ import { useStateContext } from "context/ContextProvider";
 import ProtectedRoute from "PrivateRoute";
 import SidebarLayout from "layout/SidebarLayout";
 import NotFound from "screens/NotFound";
+import UpdateProduct from "screens/Dashboard/UpdateProduct";
 
 function App() {
   const { activeMenu, auth } = useStateContext();
@@ -56,6 +57,16 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route
+              path="/updateProduct"
+              element={
+                <ProtectedRoute>
+                  <UpdateProduct />
+                </ProtectedRoute>
+              }
+            />
+
             <Route
               path="/*"
               element={

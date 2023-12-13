@@ -127,7 +127,7 @@ const getAdmin = asyncHandler(async (req, res) => {
 //GENERATE ACCESS TOKEN
 const generateAccessToken = (username) => {
   return jwt.sign({ username }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "30s",
+    expiresIn: "30m",
   });
 };
 

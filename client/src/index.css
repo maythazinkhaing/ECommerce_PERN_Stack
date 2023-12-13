@@ -134,6 +134,11 @@ td {
   animation: spin 1.2s linear infinite;
 }
 
+.DB_Images {
+  @apply object-cover  h-16  rounded-lg shadow-lg;
+  min-width: 4rem;
+}
+
 @media screen and (max-width: 800px) {
   .sidebar {
     z-index: 10000000;

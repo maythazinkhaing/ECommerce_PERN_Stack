@@ -5,7 +5,7 @@ const cors = require("cors");
 const { errorHandler } = require("./middleware/errorHandler");
 const verifyJWT = require("./middleware/authMiddleware");
 const cookieParser = require("cookie-parser");
-
+const path = require("path");
 const port = process.env.PORT || 8000;
 
 const app = express();
@@ -16,7 +16,9 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
+
+app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 
 app.use(cookieParser());
 

@@ -1,10 +1,9 @@
-import axios from "api/axios";
-//import useAxiosPrivate from "hook/UseAxiosPrivate";
+import useAxiosPrivate from "hook/useAxiosPrivate";
 
 const GET_ALL_CATE = "/categories/all";
 
-export const getCategory = async (setCategory, accessToken) => {
-  //const axiosPrivate = useAxiosPrivate();
+export async function useGetCategory(accessToken) {
+  const useAxios = useAxiosPrivate();
   const config = {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -12,13 +11,15 @@ export const getCategory = async (setCategory, accessToken) => {
     withCredential: true,
   };
   try {
-    const response = await axios.get(GET_ALL_CATE, config);
+    const response = await useAxios.get(GET_ALL_CATE, config);
 
     if (response.status === 200) {
-      //setCategory(response.data);
+      //const category = JSON.stringify(response);
+      //console.log(response.data);
       return response.data;
+      //return response.data;
     }
   } catch (error) {
     console.log(error);
   }
-};
+}

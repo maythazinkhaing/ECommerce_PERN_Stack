@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 //Image Upload MULTER
-const DIR = "uplods/";
+const DIR = "public/assets";
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, DIR);
@@ -20,20 +20,22 @@ const upload = multer({
 
 const picUploadMiddleware = (req, res, next) => {
   // Use multer upload instance
-  upload.array("files", 5)(req, res, (err) => {
+  upload.single("picture")(req, res, (err) => {
     if (err) {
       return res.status(400).json({ error: err.message });
     }
 
     // Retrieve uploaded files
-    const files = req.files;
+    const file = req.file;
     const errors = [];
-
+    // console.log("File FROM MIDDLEWARE :: " + req.file);
     // Validate file types and sizes
-    files.forEach((file) => {
-      const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-      const maxSize = 5 * 1024 * 1024; // 5MB
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+    const maxSize = 5 * 1024 * 1024; // 5MB
 
+    if (!file) {
+      errors.push("No file uploaded");
+    } else {
       if (!allowedTypes.includes(file.mimetype)) {
         errors.push(`Invalid file type: ${file.originalname}`);
       }
@@ -41,20 +43,18 @@ const picUploadMiddleware = (req, res, next) => {
       if (file.size > maxSize) {
         errors.push(`File too large: ${file.originalname}`);
       }
-    });
-
-    // Handle validation errors
-    if (errors.length > 0) {
-      // Remove uploaded files
-      files.forEach((file) => {
-        fs.unlinkSync(file.path);
-      });
-
-      return res.status(400).json({ errors });
     }
 
+    // Handle validation errors
+    // if (errors.length > 0) {
+    //   // Remove uploaded file
+    //   fs.unlinkSync(file.path);
+
+    //   return res.status(400).json({ errors });
+    // }
+
     // Attach files to the request object
-    req.files = files;
+    req.file = file;
 
     // Proceed to the next middleware or route handler
     next();

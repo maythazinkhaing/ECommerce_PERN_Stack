@@ -13,6 +13,7 @@ module.exports = {
         lightblue: "#c6e9f7",
         darkblue: "#0f172a",
         bg: "#f4f5ff",
+        menthol: "#C1F2B0",
       },
     },
   },

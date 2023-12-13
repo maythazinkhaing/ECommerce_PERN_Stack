@@ -1,30 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { PageHeader, CustomInput, CustomSelect, Button } from "components";
 import { Formik, Form } from "formik";
 import * as yup from "yup";
-import { getCategory } from "util/HandleCategoryAPI";
+import { useGetCategory } from "util/HandleCategoryAPI";
 import CustomCheckBox from "components/CustomCheckBox";
 import { createProduct } from "util/HandleProductAPI";
 import { useStateContext } from "context/ContextProvider";
 
 function CreateProduct() {
-  const { auth, setAuth } = useStateContext();
+  const { auth } = useStateContext();
   const [selectedFileName, setSelectedFileName] = useState("");
-  const [category, setCategory] = useState([
-    {
-      category_id: "",
-      category_name: "Select Category",
-    },
-  ]);
-
+  const [category, setCategory] = useState([]);
+  const fileInputRef = useRef(null);
   const { accessToken } = auth.user;
+
+  const getCategory = useGetCategory(accessToken);
+  //const createProduct = useCreateProduct();
+
   useEffect(() => {
-    console.log(
-      "CAtegor ::: " + getCategory(setCategory, accessToken, setAuth)
-    );
-    //setCategory(getCategory(setCategory, accessToken, setAuth));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category]);
+    getCategory.then((data) => {
+      setCategory(data);
+      // console.log("CATEGORY :: " + category);
+    });
+  }, [accessToken]);
 
   const productSchema = yup.object({
     product_name: yup.string().required("required"),
@@ -67,6 +65,10 @@ function CreateProduct() {
     //API CALL
     await createProduct(formData, accessToken);
     onSubmitProps.resetForm();
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   return (
@@ -94,13 +96,15 @@ function CreateProduct() {
                   placeholder="Select Product Category"
                 >
                   <option value="">Select Category</option>
-                  {category.map((cat) => {
-                    return (
-                      <option key={cat.category_id} value={cat.category_id}>
-                        {cat.category_name}
-                      </option>
-                    );
-                  })}
+                  {category &&
+                    category.length > 0 &&
+                    category.map((cat) => {
+                      return (
+                        <option key={cat.category_id} value={cat.category_id}>
+                          {cat.category_name}
+                        </option>
+                      );
+                    })}
                 </CustomSelect>
                 <CustomInput
                   label="Description"
@@ -137,6 +141,7 @@ function CreateProduct() {
                           setSelectedFileName(selectedFile);
                         }
                       }}
+                      ref={fileInputRef}
                     />
                     {errors.picture_path && (
                       <span className="error capitalize">

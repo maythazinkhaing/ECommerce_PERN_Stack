@@ -9,3 +9,5 @@ export { default as Button } from "./Dashboard/Button";
 export { default as CustomInput } from "./CustomInput";
 
 export { default as CustomSelect } from "./CustomSelect";
+
+export { default as CustomCheckBox } from "./CustomCheckBox";
