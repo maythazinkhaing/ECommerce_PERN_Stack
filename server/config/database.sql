@@ -19,12 +19,29 @@ CREATE TABLE product (
     updatedAt       TIMESTAMP
     );
 
-CREATE TABLE admin (
+CREATE TABLE users (
     id              SERIAL      PRIMARY KEY,
     username        VARCHAR(50) NOT NULL,
     email           VARCHAR(50) NOT NULL,
     password        VARCHAR(100) NOT NULL
     );
+
+CREATE TABLE user_cart (
+    cart_id         SERIAL PRIMARY KEY,
+    user_id         INTEGER REFERENCES users(id),
+    product_id      INTEGER REFERENCES product(product_id) ON DELETE CASCADE,
+    quantity        INT
+);
+
+CREATE TABLE order (
+    order_id            SERIAL PRIMARY KEY,
+    cart_id             INTEGER REFERENCES user_cart(cart_id),
+    subTotal            INTEGER,
+    total               INTEGER,
+    shipping_address    JSONB,
+
+)
+
 
 
 --  ALTER TABLE product ALTER COLUMN createdAt SET DEFAULT CURRENT_TIMESTAMP;

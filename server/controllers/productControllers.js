@@ -29,9 +29,8 @@ const createProduct = async (req, res) => {
       picture,
     } = req.body;
 
-    console.log("FrOm create Prouct :: " + req.file.filename);
-    const pic = `http://localhost:3001/assets/${picture_path}`;
-
+    console.log("FrOm create Prouct :: ", req.file);
+    const pic = `http://localhost:3001/assets/${req.file.filename}`;
     const newProduct = await pool.query(
       "INSERT INTO product (category_id, product_name, description,price, qty_instock, picture_path, feature, status) VALUES ($1, $2, $3, $4, $5, $6, $7,$8) RETURNING *",
       [
@@ -46,42 +45,12 @@ const createProduct = async (req, res) => {
       ]
     );
 
-    res.status(200).json(newProduct);
+    res.status(200).json(newProduct.rows[0]);
   } catch (error) {
-    console.log(error.message);
-    res.status(500);
+    console.log(error);
+    res.status(400).json("Product not created.");
   }
 };
-
-// const createProduct = async (req, res) => {
-//   try {
-//     const {
-//       category_id,
-//       product_name,
-//       description,
-//       qty_instock,
-//       picture_path,
-//       feature,
-//     } = req.body;
-
-//     const newProduct = await pool.query(
-//       "INSERT INTO product ( category_id, product_name, description, qty_instock, picture_path,feature) VALUES (category_id, product_name, description, qty_instock, picture_path,feature) RETURNING *",
-//       [
-//         category_id,
-//         product_name,
-//         description,
-//         qty_instock,
-//         picture_path,
-//         feature,
-//       ]
-//     );
-
-//     res.status(200).json(newProduct);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//     console.log(error);
-//   }
-// };
 
 const getProductDetail = async (req, res) => {
   const { id } = req.params;
@@ -93,6 +62,22 @@ const getProductDetail = async (req, res) => {
     );
 
     res.status(200).json(product_detail.rows[0]);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: error });
+  }
+};
+
+const getProductsDetails = async (req, res) => {
+  const { ids } = req.params;
+
+  try {
+    const idsArray = ids.split(",").map(Number);
+    const placeholders = idsArray.map((_, index) => `$${index + 1}`).join(",");
+    const query = `SELECT * FROM product WHERE product_id IN (${placeholders})`;
+    const productsDetails = await pool.query(query, idsArray);
+
+    res.status(200).json(productsDetails.rows);
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: error });
@@ -114,7 +99,7 @@ const updateProduct = async (req, res) => {
       picture,
     } = req.body;
 
-    //console.log("FrOm update Prouct :: " + req.file.picture);
+    //console.log("FrOm update Prouct :: " + req.file);
     const pic = `http://localhost:3001/assets/${picture_path}`;
     const updatedFeature = feature !== "undefined" ? feature : false;
     const updatedStatus = status !== "undefined" ? status : false;
@@ -224,6 +209,7 @@ const delProduct = async (req, res) => {
 
 module.exports = {
   getProductDetail,
+  getProductsDetails,
   getAllProducts,
   createProduct,
   delProduct,

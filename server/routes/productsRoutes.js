@@ -1,14 +1,16 @@
 const express = require("express");
 const router = express.Router();
+const picUploadMiddleware = require("../middleware/picUploadMiddleware");
 const {
   getProductDetail,
-  getAllProducts,
+
   createProduct,
   delProduct,
   updateProduct,
+  getProductsDetails,
 } = require("../controllers/productControllers");
-//const picUploadMiddleware = require("../middleware/picUploadMiddleware");
-const picUploadMiddleware = require("../middleware/picUploadMiddleware");
+const verifyRoles = require("../middleware/verifyRoles");
+const ROLE_LIST = require("../config/role_list");
 
 const multer = require("multer");
 
@@ -28,14 +30,23 @@ const upload = multer({
   storage: storage,
 });
 
-router.get("/all", getAllProducts);
-
 router.get("/detail/:id", getProductDetail);
 
-router.post("/add", picUploadMiddleware, createProduct);
+router.post(
+  "/add",
+  verifyRoles(ROLE_LIST.Admin),
+  picUploadMiddleware,
+  createProduct
+);
 
-router.put("/update/:id", picUploadMiddleware, updateProduct);
+router.put(
+  "/update/:id",
+  verifyRoles(ROLE_LIST.Admin),
+  upload.single("picture"),
 
-router.delete("/del/:id", delProduct);
+  updateProduct
+);
+
+router.delete("/del/:id", verifyRoles(ROLE_LIST.Admin), delProduct);
 
 module.exports = router;

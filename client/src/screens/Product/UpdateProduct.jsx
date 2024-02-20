@@ -5,11 +5,14 @@ import {
   CustomSelect,
   Button,
   CustomCheckBox,
+  CustomTextArea,
 } from "components";
 import { Formik, Form } from "formik";
 import * as yup from "yup";
-import { useGetCategory } from "util/HandleCategoryAPI";
-import { updateProduct } from "util/HandleProductAPI";
+//import { useGetCategory } from "util/HandleCategoryAPI";
+//import { updateProduct } from "util/HandleProductAPI";
+import useCategoryAPI from "util/HandleCategoryAPI";
+import useProductAPI from "util/HandleProductAPI";
 import { useStateContext } from "context/ContextProvider";
 import Spinner from "components/Spinner";
 
@@ -17,36 +20,50 @@ function UpdateProduct({ data, setProducts, onClose }) {
   const { auth } = useStateContext();
   const [selectedFileName, setSelectedFileName] = useState("");
   const [category, setCategory] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, SetIsSuccess] = useState(false);
+  //const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const fileInputRef = useRef(null);
   const { accessToken } = auth.user;
+  const { updateProduct } = useProductAPI();
+  const { getCategory } = useCategoryAPI(accessToken);
 
-  const getCategory = useGetCategory(accessToken);
-  //const createProduct = useCreateProduct();
+  const fetchCategory = async () => {
+    try {
+      const data = await getCategory();
+
+      setCategory((prevCategories) => {
+        // Only update if the new products are different
+        if (JSON.stringify(prevCategories) !== JSON.stringify(data)) {
+          return data;
+        }
+        return prevCategories;
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
-    getCategory.then((data) => {
-      setCategory(data);
-      // console.log("CATEGORY :: " + category);
-    });
-  }, [accessToken]);
-
-  useEffect(() => {}, [isLoading]);
+    fetchCategory();
+    // eslint-disable-next-line
+  }, [category]);
 
   const productSchema = yup.object({
     product_name: yup.string().required("required"),
-    description: yup.string().required("required"),
-    price: yup.number().required("required"),
+    description: yup.string(),
+    price: yup
+      .number()
+      .typeError("Price must be a valid number with no comma")
+      .required("required"),
     qty_instock: yup
       .number("Please Enter Numbers.")
-      .positive()
+
       .integer()
       .required("required"),
     status: yup.boolean(),
     feature: yup.boolean(),
     category: yup.string().required("required"),
-    //picture_path: yup.string().required("required"),
+    // picture_path: yup.string(),
   });
 
   const initialValues = {
@@ -72,10 +89,10 @@ function UpdateProduct({ data, setProducts, onClose }) {
       console.log(pair[0] + " - " + pair[1]);
     }
 
-    //API CALL
-    setIsLoading(true);
+    // setIsLoading(true);
 
     try {
+      //API CALL
       const updatedProduct = await updateProduct(
         data.product_id,
         formData,
@@ -98,8 +115,8 @@ function UpdateProduct({ data, setProducts, onClose }) {
         fileInputRef.current.value = "";
       }
 
-      setIsLoading(false);
-      SetIsSuccess(true);
+      // setIsLoading(false);
+      setIsSuccess(true);
     } catch (error) {
       console.log(error);
     }
@@ -126,7 +143,6 @@ function UpdateProduct({ data, setProducts, onClose }) {
         </div>
       ) : (
         <div className="body_container">
-          {isLoading && <Spinner />}
           <PageHeader title="Update Product" />
           <hr />
           <div>
@@ -135,7 +151,7 @@ function UpdateProduct({ data, setProducts, onClose }) {
               validationSchema={productSchema}
               onSubmit={upload}
             >
-              {({ setFieldValue, errors, resetForm }) => {
+              {({ setFieldValue, errors }) => {
                 return (
                   <Form className="grid gap-y-8 mx-auto mt-0 w-full py-5 md:grid-cols-2">
                     <CustomInput
@@ -163,10 +179,9 @@ function UpdateProduct({ data, setProducts, onClose }) {
                           );
                         })}
                     </CustomSelect>
-                    <CustomInput
+                    <CustomTextArea
                       label="Description"
                       name="description"
-                      type="text"
                       placeholder="Enter Description"
                     />
                     <CustomInput
@@ -205,7 +220,7 @@ function UpdateProduct({ data, setProducts, onClose }) {
                         {errors.picture_path && (
                           <span className="error capitalize">
                             {" "}
-                            Choose An Image{" "}
+                            {errors.picture_path}
                           </span>
                         )}
                       </div>
@@ -221,6 +236,12 @@ function UpdateProduct({ data, setProducts, onClose }) {
                       type="checkbox"
                     />
                     <div className="input_div md:col-span-2 mt-9 gap-2 pl-10 md:justify-end ">
+                      <button
+                        className="button bg-gray-200 text-darkblue"
+                        onClick={onClose}
+                      >
+                        Cancel
+                      </button>
                       <Button name={"Save"} type="submit" />
                     </div>
                   </Form>

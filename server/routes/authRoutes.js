@@ -1,22 +1,25 @@
 const express = require("express");
 const router = express.Router();
 const {
-  registerAdmin,
-  loginAdmin,
-  getAdmin,
+  registerUser,
+  loginUser,
+  getUser,
   refreshToken,
   logout,
+  getAllUsers,
 } = require("../controllers/authControllers");
 const verifyJWT = require("../middleware/authMiddleware");
 
-router.post("/registerAdmin", registerAdmin);
+router.post("/registerUser", registerUser);
 
-router.post("/loginAdmin", loginAdmin);
+router.post("/loginUser", loginUser);
 
 router.get("/refreshToken", refreshToken);
 
 router.post("/logout", logout);
 
-router.get("/getAdmin", verifyJWT, getAdmin);
+router.get("/getUser", verifyJWT, getUser);
+
+router.get("/getAllUsers", getAllUsers);
 
 module.exports = router;

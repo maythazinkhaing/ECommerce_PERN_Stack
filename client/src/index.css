@@ -12,6 +12,10 @@ body {
   @apply flex justify-between items-center;
 }
 
+.button {
+  @apply w-20 h-7 py-1 px-3 text-xs text-white rounded-md my-2 mx-1 uppercase bg-skyblue;
+}
+
 .link {
   @apply flex gap-3 py-3 px-2 text-xs items-center font-light cursor-pointer hover:bg-lightblue/40 hover:text-skyblue rounded-md duration-200 hover:translate-x-2;
 }
@@ -71,23 +75,33 @@ form label {
 
 @layer components {
   input,
-  select {
+  select,
+  textarea {
     @apply text-xs font-light py-1.5 px-2 border-solid border border-gray-500 rounded-md outline-none;
   }
 }
 
 input:focus,
+textarea:focus,
 select:focus {
   @apply border-sky-400;
 }
 
 input::placeholder,
-select::placeholder {
+textarea::placeholder select::placeholder {
   color: #a0aec0;
 }
 
 .input-error {
   border: 1px solid red;
+}
+
+.table {
+  @apply min-w-full text-left text-xs font-light items-center;
+}
+
+thead {
+  @apply border-b dark:border-neutral-200 uppercase;
 }
 
 th,

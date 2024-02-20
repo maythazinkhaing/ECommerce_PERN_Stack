@@ -11,3 +11,7 @@ export { default as CustomInput } from "./CustomInput";
 export { default as CustomSelect } from "./CustomSelect";
 
 export { default as CustomCheckBox } from "./CustomCheckBox";
+
+export { default as CustomTextArea } from "./CustomTextArea";
+
+export { default as Modal } from "./Dashboard/Modal";

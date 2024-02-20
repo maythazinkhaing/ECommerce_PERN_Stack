@@ -45,6 +45,7 @@ export const links = [
         id: 2,
         name: "product category",
         icon: <AiOutlineShoppingCart />,
+        src: "categoryConfig",
       },
     ],
   },

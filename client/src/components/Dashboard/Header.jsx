@@ -31,7 +31,8 @@ function Header() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const logoutHandler = () => {
-    handleLogOut(setAuth);
+    handleLogOut();
+    setAuth({ user: null });
   };
 
   useEffect(() => {

@@ -1,11 +1,11 @@
 import axios from "api/axios";
 
-const LOGIN_URL = "/auth/loginAdmin";
+const LOGIN_URL = "/auth/loginUser";
 const LOGOUT_URL = "auth/logout";
 const REFRESH = "/auth/refreshToken";
 //export const savedUser = JSON.parse(localStorage.getItem("user"));
 
-export const login = async (formData, setAuth) => {
+export const login = async (formData) => {
   try {
     const response = await axios.post(LOGIN_URL, formData, {
       headers: {
@@ -16,15 +16,8 @@ export const login = async (formData, setAuth) => {
 
     if (response.status === 200) {
       localStorage.setItem("user", JSON.stringify(response.data));
-      setAuth((data) => {
-        return {
-          ...data,
-          user: response.data,
-          isSuccess: true,
-        };
-      });
 
-      alert("login");
+      //  alert("login");
 
       return response.data;
     }
@@ -64,11 +57,12 @@ export const handleLogOut = async (setAuth) => {
       {},
       { withCredentials: true }
     );
+
     localStorage.removeItem("user");
     setAuth({
       user: null,
-      isSuccess: false,
     });
+    console.log("LOGOUT RES :" + response);
     console.log(response);
   } catch (error) {
     console.log(error);

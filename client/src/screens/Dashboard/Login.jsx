@@ -30,17 +30,26 @@ function Login() {
     }
 
     //API
-    await login(formData, setAuth);
+    const userData = await login(formData, setAuth);
 
+    if (userData) {
+      navigate("/productConfig");
+      setAuth((data) => {
+        return {
+          ...data,
+          user: userData,
+        };
+      });
+    }
     onSubmitProps.resetForm();
   };
 
   useEffect(() => {
-    if (auth.isSuccess || auth.user) {
-      navigate("/productConfig");
+    if (!auth.user) {
+      navigate("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth.user, auth.isSuccess]);
+  }, [auth.user]);
 
   return (
     <div className="login item_center justify-center flex-col">
@@ -52,8 +61,8 @@ function Login() {
           <Formik
             initialValues={initialValues}
             validationSchema={loginSchema}
-            onSubmit={(e, values, onSubmitProps) =>
-              handleLogin(e, values, onSubmitProps)
+            onSubmit={(values, onSubmitProps) =>
+              handleLogin(values, onSubmitProps)
             }
           >
             {({ resetForm, values, onSubmitProps }) => {

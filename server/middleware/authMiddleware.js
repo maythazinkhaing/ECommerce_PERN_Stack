@@ -13,7 +13,9 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
     token = authHeader.split(" ")[1];
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
       if (err) return res.sendStatus(403); //invalid
-      req.user = decoded.username;
+      req.user = decoded.UserInfo.username;
+      req.role = decoded.UserInfo.role;
+      //console.log("role : " + req.role);
       next();
     });
   }

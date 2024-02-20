@@ -5,12 +5,12 @@ const Modal = ({ isOpen, onClose, children }) => {
     <>
       {isOpen && (
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen">
+          <div className="flex items-center justify-center min-h-screen ">
             <div
               className="fixed inset-0 bg-black opacity-50"
               onClick={onClose}
             ></div>
-            <div className="bg-white rounded shadow-lg z-50 py-5 px-7">
+            <div className="bg-white rounded shadow-lg z-50 py-5 px-7 mx-5 min-w-[30%]">
               {children}
             </div>
           </div>

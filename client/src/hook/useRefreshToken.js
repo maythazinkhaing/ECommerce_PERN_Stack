@@ -1,8 +1,12 @@
 import axios from "api/axios";
 import { useStateContext } from "context/ContextProvider";
+import { handleLogOut } from "util/HandleAuth";
+import { useNavigate } from "react-router-dom";
+
 const REFRESH = "/auth/refreshToken";
 function useRefreshToken() {
-  const { auth, setAuth } = useStateContext();
+  const { setAuth } = useStateContext();
+  const nav = useNavigate();
 
   const refresh = async () => {
     try {
@@ -22,6 +26,11 @@ function useRefreshToken() {
       });
       return response.data.accessToken;
     } catch (error) {
+      if (error.response.status === 401 || error.response.status === 403) {
+        alert(" your token has expired. Please Log in Again.");
+        handleLogOut(setAuth);
+        nav("/");
+      }
       console.error("Error refreshing token:", error);
       throw error; // Propagate the error for further handling
     }

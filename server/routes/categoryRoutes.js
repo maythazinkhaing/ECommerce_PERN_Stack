@@ -7,8 +7,6 @@ const {
   updateCategory,
 } = require("../controllers/categoryControllers");
 
-router.get("/all", getAllCategories);
-
 router.post("/add", createCategory);
 
 router.put("/update/:id", updateCategory);

@@ -1,0 +1,174 @@
+@import url("https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Poppins:wght@100;200;400;500&display=swap");
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.customShadow {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+.login {
+  background-image: url("/Users/moontoon/Desktop/ECommerce_PERN/user/src/assets/bg3.jpeg");
+  @apply bg-cover w-screen h-screen;
+}
+
+.login .login_div {
+  @apply w-full pl-4;
+}
+
+.login label {
+  @apply text-sm;
+}
+
+.login Button {
+  @apply w-full h-8 tracking-widest bg-amber-800 hover:bg-amber-700 transition;
+}
+
+.error {
+  color: red;
+  font-size: 9px;
+  margin-left: 5px;
+  margin-top: 0.25rem;
+}
+
+.input_div {
+  @apply flex items-center justify-center;
+}
+
+form label {
+  @apply block text-left w-28 text-xs;
+}
+
+@layer components {
+  input,
+  select,
+  textarea {
+    @apply text-xs font-light py-1.5 px-2 border-solid border border-gray-500 rounded-md outline-none;
+  }
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  @apply border-sky-400;
+}
+
+input::placeholder,
+textarea::placeholder select::placeholder {
+  color: #a0aec0;
+}
+
+.input-error {
+  border: 1px solid red;
+}
+
+.navbar_container {
+  @apply h-20 w-full shadow-sm flex items-center justify-between px-5 lg:px-20 z-40;
+}
+
+.nav_dropdown {
+  @apply duration-500 md:static md:inline-flex transition-transform origin-top absolute opacity-0 transform scale-y-0  md:scale-y-100 md:opacity-100;
+}
+
+.nav_dropdown_active {
+  @apply absolute opacity-100 transform left-0 scale-y-100 top-[8%] p-4 pl-5 z-50 bg-white shadow-sm min-h-[50vh] w-[100vw];
+}
+
+.nav_sub_dropdown {
+  @apply absolute  transform origin-top transition-all duration-500 scale-y-0 group-hover:scale-y-100 z-50  text-xs;
+}
+
+.nav_sub_dropdown_active {
+  @apply relative py-0 justify-center flex;
+}
+
+.nav_sub_dropdown ul > li {
+  @apply px-2 py-2 rounded-md hover:bg-Linen hover:text-deepBrown capitalize;
+}
+
+.home_header {
+  @apply font-abril text-[96px] w-96 text-center leading-[72px] text-deepBrown lg:mt-32;
+}
+
+.menu_header {
+  @apply h-10 min-w-full text-white tracking-widest flex items-center justify-center rounded-md my-4;
+  background-image: linear-gradient(
+    111.4deg,
+    rgb(249, 164, 164) 1%,
+    rgba(246, 215, 148, 1) 58%
+  );
+}
+
+.cart_container {
+  @apply py-4;
+}
+
+.cart_emptySection {
+  @apply flex flex-col justify-center items-center;
+}
+.cart_emptySection h3 {
+  @apply pt-10 pb-6 text-gray-400 tracking-widest text-xs capitalize;
+}
+
+.button {
+  @apply bg-deepBrown text-sm text-white uppercase rounded py-2 px-5 tracking-wider drop-shadow-sm shadow-slate-600 hover:bg-opacity-85  duration-300 cursor-pointer;
+}
+
+.clearButton {
+  @apply bg-transparent border border-deepBrown rounded text-deepBrown w-full text-sm  uppercase  py-2 px-5 tracking-wider drop-shadow-sm shadow-slate-600 hover:bg-white  duration-300 cursor-pointer;
+}
+
+.button:active {
+  box-shadow: rgb(99, 52, 2) 3px 3px 6px 0px inset,
+    rgba(145, 75, 32, 0.5) -3px -3px 6px 1px inset;
+}
+
+.cart_container h1 {
+  @apply text-center text-base font-black uppercase pt-8 tracking-widest;
+}
+
+.cart_container h2 {
+  @apply text-sm font-medium uppercase text-left;
+}
+
+.cart_sections {
+  @apply w-full grid lg:grid-cols-5 lg:gap-4 grid-cols-1 mt-10;
+}
+
+.counter {
+  @apply grid grid-cols-3 w-20 p-1 text-center text-xs border rounded-md;
+}
+
+.cart_summarySection {
+  @apply bg-Linen col-span-2 p-5 rounded;
+}
+
+.cart_summarySection .header {
+  @apply tracking-wide text-base font-medium;
+}
+
+.cart_summarySection .body {
+  @apply text-sm flex justify-between py-3 items-center;
+}
+
+.loading {
+  @apply flex flex-col items-center justify-center h-screen bg-white bg-opacity-90 fixed inset-0 z-50;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -7,24 +7,29 @@ import {
   AdminConfig,
   CreateAdmin,
   Login,
+  CategoryConfig,
+  Unthorizied,
 } from "screens";
 import { useStateContext } from "context/ContextProvider";
 import ProtectedRoute from "PrivateRoute";
 import SidebarLayout from "layout/SidebarLayout";
 import NotFound from "screens/NotFound";
-import UpdateProduct from "screens/Dashboard/UpdateProduct";
 
 function App() {
-  const { activeMenu, auth } = useStateContext();
-  const r = auth.refreshToken;
+  const { auth } = useStateContext();
+
   console.log(auth);
+  const ROLE_LIST = {
+    Admin: 3130,
+    User: 2001,
+  };
 
   return (
     <div>
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route element={<SidebarLayout />}>
+          <Route element={<SidebarLayout allowedRoles={[ROLE_LIST.Admin]} />}>
             <Route
               path="/createProduct"
               element={
@@ -59,10 +64,10 @@ function App() {
             />
 
             <Route
-              path="/updateProduct"
+              path="/categoryConfig"
               element={
                 <ProtectedRoute>
-                  <UpdateProduct />
+                  <CategoryConfig />
                 </ProtectedRoute>
               }
             />
@@ -76,6 +81,7 @@ function App() {
               }
             />
           </Route>
+          <Route path="/unauthorized" element={<Unthorizied />} />
         </Routes>
       </Router>
     </div>

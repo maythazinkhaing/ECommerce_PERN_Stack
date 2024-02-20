@@ -1,39 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { PageHeader, Button } from "components";
-
 import { HiOutlineTrash, HiOutlinePencilAlt } from "react-icons/hi";
-import { useGetAllProduct, delProduct } from "util/HandleProductAPI";
+import { IoClose } from "react-icons/io5";
+//import { useGetAllProduct, delProduct } from "util/HandleProductAPI";
+import useProductAPI from "util/HandleProductAPI";
 import { useStateContext } from "context/ContextProvider";
 import Modal from "components/Dashboard/Modal";
-import CreateProduct from "./CreateProduct";
 import UpdateProduct from "./UpdateProduct";
-//import useRefreshToken from "hook/useRefreshToken";
 
 function ProductConfig() {
   const { auth } = useStateContext();
   const [products, setProducts] = useState([]);
-
-  const [showModal, setShowModal] = useState(false);
-  const [editModal, setEditModal] = useState(false);
-  const [selectedProductId, setSelectedProductId] = useState(null);
-  const [productDetail, setProductDetail] = useState();
+  const [modals, setModals] = useState({
+    delete: { isOpen: false, data: null },
+    edit: { isOpen: false, data: null },
+    // Add more modals as needed
+  });
 
   const { accessToken } = auth.user;
 
-  const getAllProduct = useGetAllProduct(accessToken);
-  //const delProduct = useDelProduct();
+  const { getAllProduct, delProduct } = useProductAPI(accessToken);
 
-  // const handleDelete = (id) => {
-  //   delProduct(id, accessToken);
-  //   setProduct(products.filter((product) => product.product_id !== id));
-  // };
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getAllProduct;
-        console.log(data);
+        const data = await getAllProduct(accessToken);
 
-        // Use functional update to avoid infinite loop
         setProducts((prevProducts) => {
           // Only update if the new products are different
           if (JSON.stringify(prevProducts) !== JSON.stringify(data)) {
@@ -47,49 +39,42 @@ function ProductConfig() {
     };
 
     fetchData();
-  }, [accessToken, getAllProduct]);
+    // eslint-disable-next-line
+  }, [products, modals]);
 
-  const openModal = (id) => {
-    setShowModal(true);
-    setSelectedProductId(id);
-    //console.log("Modal Opened");
+  const toggleModal = (modalType, data = null) => {
+    setModals((prevModals) => ({
+      ...prevModals,
+      [modalType]: { isOpen: !prevModals[modalType].isOpen, data },
+    }));
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    setSelectedProductId(null);
-  };
-
-  const openEditModal = (detail) => {
-    setEditModal(true);
-    setProductDetail(detail);
-    console.log(detail);
-    //console.log("Modal Opened");
-  };
-
-  const closeEditModal = () => {
-    setEditModal(false);
-    setProductDetail(null);
-  };
   const handleDelete = async () => {
-    if (selectedProductId) {
-      await delProduct(selectedProductId, accessToken);
-      setProducts(
-        products.filter((product) => product.product_id !== selectedProductId)
+    const id = modals.delete.data;
+    if (id) {
+      await delProduct(id, accessToken);
+
+      // Update the state after deletion
+      setProducts((prevProducts) =>
+        prevProducts.filter((product) => product.product_id !== id)
       );
-      closeModal();
+
+      toggleModal("delete");
     }
   };
 
   return (
-    <div className="body_container" id="app">
+    <div className="body_container">
       <PageHeader title="Product Lists" />
       <hr />
-      <Button name={"create"} to="/createProduct" />
-      {/* <button onClick={() => refresh()}>Refresh</button> */}
+      <div className="flex justify-end my-2">
+        <Button name={"create"} to="/createProduct" />
+      </div>
+
+      {/* <button onClick={() => refresh(setAuth, nav)}>Refresh</button> */}
       <div className="overflow-x-auto">
-        <table className="min-w-full text-left text-xs font-light items-center ">
-          <thead className="border-b dark:border-neutral-200">
+        <table className="table ">
+          <thead>
             <tr>
               <th>No.</th>
               <th>Image</th>
@@ -133,7 +118,7 @@ function ProductConfig() {
                     <div className="flex">
                       <button
                         className="text-lg text-skyblue  mx-1 hover:text-sky-500"
-                        onClick={() => openEditModal(product)}
+                        onClick={() => toggleModal("edit", product)}
                       >
                         <HiOutlinePencilAlt />
                       </button>
@@ -141,7 +126,7 @@ function ProductConfig() {
                         className="text-lg mx-1 text-rose-500 hover:text-rose-700"
                         // onClick={() => handleDelete(product.product_id)}
                         onClick={() =>
-                          openModal(product.product_id, setProducts)
+                          toggleModal("delete", product.product_id)
                         }
                       >
                         <HiOutlineTrash />
@@ -154,19 +139,25 @@ function ProductConfig() {
           </tbody>
         </table>
       </div>
-      <Modal isOpen={showModal} onClose={closeModal}>
-        <h2 className="text-md font-bold mb-4">DELETE</h2>
-        <p className="text-sm  mb-4">Delete the product ?</p>
+      <Modal
+        isOpen={modals.delete.isOpen}
+        onClose={() => toggleModal("delete")}
+      >
+        <div className="flex justify-between text-md font-bold mb-4">
+          <h2>DELETE</h2>
+          <button
+            className="hover:text-red-600"
+            onClick={() => toggleModal("delete")}
+          >
+            <IoClose />
+          </button>
+        </div>
+
+        <hr />
+        <p className="text-sm my-4">Delete the product ?</p>
         <div className="flex justify-end ">
           <button
-            className="w-20 h-7 py-1 px-3 text-xs rounded-md my-2 mx-1 uppercase bg-gray-200 "
-            // onClick={() => handleDelete(product.product_id)}
-            onClick={closeModal}
-          >
-            Cancel
-          </button>
-          <button
-            className="w-20 h-7 py-1 px-3 text-xs rounded-md my-2 mx-1 uppercase bg-skyblue text-white "
+            className="button "
             // onClick={() => handleDelete(product.product_id)}
             onClick={handleDelete}
           >
@@ -174,8 +165,11 @@ function ProductConfig() {
           </button>
         </div>
       </Modal>
-      <Modal isOpen={editModal} onClose={closeEditModal}>
-        <UpdateProduct data={productDetail} onClose={closeEditModal} />
+      <Modal isOpen={modals.edit.isOpen} onClose={() => toggleModal("edit")}>
+        <UpdateProduct
+          data={modals.edit.data}
+          onClose={() => toggleModal("edit")}
+        />
       </Modal>
     </div>
   );
